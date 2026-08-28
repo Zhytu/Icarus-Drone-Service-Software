@@ -19,6 +19,12 @@ namespace Icarus_Drone_Service_Software
         public MainWindow()
         {
             InitializeComponent();
-        }
-    }
+
+			Queue<Drone> RegularService = new Queue<Drone>();
+			Queue<Drone> ExpressService = new Queue<Drone>();
+
+			List<Drone> FinishedList = new List<Drone>();
+
+		}
+	}
 }

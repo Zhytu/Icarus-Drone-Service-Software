@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Icarus_Drone_Service_Software"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="1013">
     <Grid>
@@ -28,7 +29,8 @@
                             <Label DockPanel.Dock="Top" FontWeight="Bold">Service Cost</Label>
                             <TextBox Margin="5" DockPanel.Dock="Top" x:Name="TbxServiceCost" />
                             <Label DockPanel.Dock="Top" FontWeight="Bold">Service Tag</Label>
-                            <TextBox Margin="5" DockPanel.Dock="Top" IsEnabled="False"></TextBox>
+                            <xctk:IntegerUpDown DockPanel.Dock="Top" Margin="5" x:Name="IUDServiceTag" AllowSpin="False" AllowTextInput="False" Minimum="100" Maximum="900" Increment="10"/>
+
                         </DockPanel>
                         <DockPanel Grid.Column="1" LastChildFill="False">
                             <Label DockPanel.Dock="Top" FontWeight="Bold">Service Type</Label>
