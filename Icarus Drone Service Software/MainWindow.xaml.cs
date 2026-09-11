@@ -7,6 +7,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -30,43 +31,45 @@ namespace Icarus_Drone_Service_Software
             InitializeComponent();
 		}
 
-		// Button Methods
+		// User Interaction Methods
 
 		private void AddNewItem(object sender, RoutedEventArgs e)
 		{
-			if (CheckEntryValidity() == true)
+			// This function triggers if the submit button is clicked.
+			// It verifies that the fields are valid, then creates a new drone object, adds it to the relevant listview and queue, and displays a relevant status strip message.
+
+			if (CheckEntryValidity() == true) // Check that there are no errors in the input fields.
 			{
+				// Create new drone object.
 				Drone drone = new Drone(TbxClientName.Text, TbxDroneModel.Text, TbxServiceProblem.Text, double.Parse(TbxServiceCost.Text), int.Parse(IudServiceTag.Text));
 
-				// Increment the service tag for the next drone
+				// Increment the service tag for the next drone.
 				IncrementTag();
 
 
-				if (GetServicePriority() == true)
+				if (GetServicePriority() == true) // Check express button is selected.
 				{
-					// express
-
-					// add express service surcharge to the service cost
-					// add the drone to the express service queue
+					// Add express service surcharge to the service cost.
 					drone.SetServiceCost(drone.GetServiceCost() * 1.15);
+					// Add the drone to the express service queue
 					ExpressService.Enqueue(drone);
 
-					//refresh listview
+					// Refresh the express listview.
 					DisplayServiceQueue(ExpressService, LvwExpress);
 
+					// Display a relevant status strip message.
 					SbrStatus.Items.Clear();
 					SbrStatus.Items.Add($"Item {drone.GetServiceTag()} added to express queue.");
 				}
-				else
+				else // If regular button is selected.
 				{
-					// regular
-
-					// add the drone to the regular service queue
+					// Add the drone to the regular service queue.
 					RegularService.Enqueue(drone);
 
-					//refresh listview
+					// Refresh the regular listview.
 					DisplayServiceQueue(RegularService, LvwRegular);
 
+					// Display a relevant status strip message
 					SbrStatus.Items.Clear();
 					SbrStatus.Items.Add($"Item {drone.GetServiceTag()} added to standard queue.");
 				}
@@ -79,7 +82,7 @@ namespace Icarus_Drone_Service_Software
 			}
 		}
 
-		// UI Helper Methods
+		// Helper Methods
 
 		private void ClearInputFields()
 		{
@@ -93,7 +96,8 @@ namespace Icarus_Drone_Service_Software
 
 		private void IncrementTag()
 		{
-			// This function increments the service tag by the predefined increment value (10). It also keeps the global service tag value updated.
+			// This function increments the service tag by the predefined increment value (10).
+			// It also keeps the global service tag value updated.
 			
 			IudServiceTag.Value += IudServiceTag.Increment;
 			currentServiceTag = (int)IudServiceTag.Value; // update global service tag variable
@@ -127,45 +131,47 @@ namespace Icarus_Drone_Service_Software
 
 		private bool CheckEntryValidity()
 		{
-			// This function 
+			// This function runs several checks to see if the inputs fields contain errors.
+			// If so, it reurns true and displays an appropriate error message. 
+
 			SbrStatus.Items.Clear();
 			string errorMessage = "";
-			if (string.IsNullOrWhiteSpace(TbxClientName.Text))
+			if (string.IsNullOrWhiteSpace(TbxClientName.Text)) // Check if client name field is empty.
 			{
 				errorMessage = "Client Name is required.";
 				SbrStatus.Items.Add(errorMessage);
 			}
-			if (string.IsNullOrWhiteSpace(TbxDroneModel.Text))
+			if (string.IsNullOrWhiteSpace(TbxDroneModel.Text)) // Check if drone model feild is empty.
 			{
 				errorMessage = "Drone Model is required.";
 				SbrStatus.Items.Add(errorMessage);
 			}
-			if (string.IsNullOrWhiteSpace(TbxServiceProblem.Text))
+			if (string.IsNullOrWhiteSpace(TbxServiceProblem.Text)) // Check if service problem field is empty.
 			{
 				errorMessage = "Service Problem is required.";
 				SbrStatus.Items.Add(errorMessage);
 			}
-			if (string.IsNullOrWhiteSpace(TbxServiceCost.Text))
+			if (string.IsNullOrWhiteSpace(TbxServiceCost.Text)) // Check if service cost field is empty.
 			{
 				errorMessage = "Service Cost is required.";
 				SbrStatus.Items.Add(errorMessage);
 			}
 			// check that service cost is a valid double with two decimal places
-			if (!double.TryParse(TbxServiceCost.Text, out double serviceCost) || serviceCost < 0)
+			if (!double.TryParse(TbxServiceCost.Text, out double serviceCost) || serviceCost < 0) // Check if service cost is a positive number.
 			{
 				errorMessage = "Service Cost must be a valid positive number.";
 				SbrStatus.Items.Add(errorMessage);
 			}
-			else if (Math.Abs(serviceCost - Math.Round(serviceCost, 2)) > 0.000001)
+			else if (Math.Abs(serviceCost - Math.Round(serviceCost, 2)) > 0.000001) // Check if service cost has at most two decimal places.
 			{
 				errorMessage = "Service Cost must have at most two decimal places.";
 				SbrStatus.Items.Add(errorMessage);
 			}
-			if (errorMessage != "")
+			if (errorMessage != "") // If no errors are detected, return false.
 			{
 				return false;
 			}
-			else
+			else // If errors are detected, return true.
 			{
 				return true;
 			}
@@ -174,19 +180,24 @@ namespace Icarus_Drone_Service_Software
 
 		private void LvwRegular_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
+			// This function triggers when the selection changes in the Regular list view.
+			// It fills in the details from the selected item into the input fields on the left hand side, setting them to read only.
+			// It checks if an item from the Express list view is selected. If so, it deselects it.
+			// It also detects if an item is manually deselected, which empties the fields, and makes them writeable again.
 			
-			// Highlight the selected drone in the listview and display its details in the fill in fields, disable fields until no item is selected
-			if (LvwRegular.SelectedItem is Drone selectedDrone)
+			if (LvwRegular.SelectedItem is Drone selectedDrone) // Check if selected item is a drone. If so, creates selectedDrone with pattern matching.
 			{
-				// deselect express listview
+				// Set express listview selection to null.
 				LvwExpress.SelectedItem = null;
 
+				// Fill all input fields with drone variables.
 				TbxClientName.Text = selectedDrone.GetClientName();
 				TbxDroneModel.Text = selectedDrone.GetDroneModel();
 				TbxServiceProblem.Text = selectedDrone.GetServiceProblem();
 				TbxServiceCost.Text = selectedDrone.GetServiceCost().ToString("F2");
 				IudServiceTag.Value = selectedDrone.GetServiceTag();
-				// Disable the input fields
+
+				// Disable the input fields.
 				TbxClientName.IsEnabled = false;
 				TbxDroneModel.IsEnabled = false;
 				TbxServiceProblem.IsEnabled = false;
@@ -196,16 +207,16 @@ namespace Icarus_Drone_Service_Software
 				RbtRegular.IsEnabled = false;
 				BtnSubmit.IsEnabled = false;
 
-				// status strip message
+				// Display relevant status strip message.
 				SbrStatus.Items.Clear();
 				SbrStatus.Items.Add($"Selected Drone {selectedDrone.GetServiceTag()}. (Ctrl+Click to deselect)");
 
 			}
 			else
 			{
-				if (LvwRegular.SelectedItem == null && LvwExpress.SelectedItem == null)
+				if (LvwRegular.SelectedItem == null && LvwExpress.SelectedItem == null) // Check if there is no selected item in either listview.
 				{
-					// Clear the input fields and enable them if no item is selected
+					// Clear the input fields and enable them.
 					ClearInputFields();
 					TbxClientName.IsEnabled = true;
 					TbxDroneModel.IsEnabled = true;
@@ -217,6 +228,7 @@ namespace Icarus_Drone_Service_Software
 					RbtRegular.IsEnabled = true;
 					BtnSubmit.IsEnabled = true;
 
+					// Remove status strip message.
 					SbrStatus.Items.Clear();
 				}
 				
@@ -225,19 +237,25 @@ namespace Icarus_Drone_Service_Software
 
 		private void LvwExpress_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			
+			// This function triggers when the selection changes in the Express list view.
+			// It fills in the details from the selected item into the input fields on the left hand side, setting them to read only.
+			// It checks if an item from the Regular list view is selected. If so, it deselects it.
+			// It also detects if an item is manually deselected, which empties the fields, and makes them writeable again.
+
 			// Highlight the selected drone in the listview and display its details in the fill in fields, disable fields until no item is selected
 			if (LvwExpress.SelectedItem is Drone selectedDrone)
 			{
-				// deselect regular listview
+				// Set regular listview selection to null.
 				LvwRegular.SelectedItem = null;
 
+				// Fill all input fields with drone variables.
 				TbxClientName.Text = selectedDrone.GetClientName();
 				TbxDroneModel.Text = selectedDrone.GetDroneModel();
 				TbxServiceProblem.Text = selectedDrone.GetServiceProblem();
 				TbxServiceCost.Text = selectedDrone.GetServiceCost().ToString("F2");
 				IudServiceTag.Value = selectedDrone.GetServiceTag();
-				// Disable the input fields
+
+				// Disable the input fields.
 				TbxClientName.IsEnabled = false;
 				TbxDroneModel.IsEnabled = false;
 				TbxServiceProblem.IsEnabled = false;
@@ -246,15 +264,16 @@ namespace Icarus_Drone_Service_Software
 				RbtExpress.IsEnabled = false;
 				RbtRegular.IsEnabled = false;
 				BtnSubmit.IsEnabled = false;
-				// status strip message
+
+				// Display relevant status strip message.
 				SbrStatus.Items.Clear();
 				SbrStatus.Items.Add($"Selected Drone: {selectedDrone.GetClientName()} - Service Tag: {selectedDrone.GetServiceTag()} (Ctrl+Click to deselect)");
 			}
 			else
 			{
-				if (LvwExpress.SelectedItem == null && LvwRegular.SelectedItem == null)
+				if (LvwExpress.SelectedItem == null && LvwRegular.SelectedItem == null) // Check if there is no selected item in either listview.
 				{
-					// Clear the input fields and enable them if no item is selected
+					// Clear the input fields and enable them.
 					ClearInputFields();
 					TbxClientName.IsEnabled = true;
 					TbxDroneModel.IsEnabled = true;
@@ -266,23 +285,29 @@ namespace Icarus_Drone_Service_Software
 					RbtRegular.IsEnabled = true;
 					BtnSubmit.IsEnabled = true;
 
+					// Remove status strip message.
 					SbrStatus.Items.Clear();
 				}
 			}
 		}
 
-		private void Button_Click(object sender, RoutedEventArgs e)
+		private void BtnProcessRegular_Click(object sender, RoutedEventArgs e)
 		{
-			//remove the oldest drone from the regular service queue and add it to the finished list
+			// This function triggers when the Process button for the regular queue is clicked.
+			// It removes the next item from the regular queue, and then places that item in the finished list.
+			// It also refreshes the regular listview and adds the item to the listbox.
+
+			// Remove the oldest drone from the regular service queue and turn it into a variable.
 			Drone added = RegularService.Dequeue();
 
-			
-
+			// Add the item to the finished list.
 			FinishedList.Add(added);
+			// Add the item to the finished listbox.
 			LbxFinished.Items.Add(added);
+			// Refresh regular queue listview.
 			DisplayServiceQueue(RegularService, LvwRegular);
 
-
+			// Display a relevant message in the status strip
 			SbrStatus.Items.Clear();
 			SbrStatus.Items.Add($"Item {added.GetServiceTag()} deqeued from standard queue.");
 
@@ -290,24 +315,37 @@ namespace Icarus_Drone_Service_Software
 
 		private void BtnProcessExpress_Click(object sender, RoutedEventArgs e)
 		{
-			//remove the oldest drone from the express service queue and add it to the finished list
+			// This function triggers when the Process button for the express queue is clicked.
+			// It removes the next item from the regular queue, and then places that item in the finished list.
+			// It also refreshes the regular listview and adds the item to the listbox.
+
+			// Remove the oldest drone from the regular service queue and turn it into a variable.
 			Drone added = ExpressService.Dequeue();
 
-			
-
+			// Add the item to the finished list.
 			FinishedList.Add(added);
+			// Add the item to the finished listbox.
 			LbxFinished.Items.Add(added);
+			// Refresh regular queue listview.
 			DisplayServiceQueue(ExpressService, LvwExpress);
 
+			// Display a relevant message in the status strip
 			SbrStatus.Items.Clear();
 			SbrStatus.Items.Add($"Item {added.GetServiceTag()} deqeued from express queue.");
 		}
 
 		private void LbxFinished_MouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
-			Drone removed = (Drone)LbxFinished.SelectedItem;
-			LbxFinished.Items.Remove(removed);
-			FinishedList.Remove(removed); 
+			// This function triggers when the finished listbox is double clicked.
+			// It removes the selected item from the finished listbox and the corresponding item from the finished list.
+
+			if (LbxFinished.SelectedItem != null) // Check if selected is not null
+			{
+				Drone removed = (Drone)LbxFinished.SelectedItem;
+				LbxFinished.Items.Remove(removed);
+				FinishedList.Remove(removed);
+			}
 		}
+
 	}
 }

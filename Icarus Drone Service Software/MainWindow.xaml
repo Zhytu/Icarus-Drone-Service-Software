@@ -73,7 +73,7 @@
                 </Grid.ColumnDefinitions>
                 <DockPanel LastChildFill="True" Grid.Column="0" Margin="5">
                     <Label DockPanel.Dock="Top" FontWeight="Bold">Regular Queue</Label>
-                    <Button x:Name="BtnProcessRegular"  Margin="5" DockPanel.Dock="Bottom" Click="Button_Click">Process Next in Queue</Button>
+                    <Button x:Name="BtnProcessRegular"  Margin="5" DockPanel.Dock="Bottom" Click="BtnProcessRegular_Click">Process Next in Queue</Button>
                     <ListView x:Name="LvwRegular" Margin="5" DockPanel.Dock="Top" d:ItemsSource="{d:SampleData ItemCount=5}" SelectionChanged="LvwRegular_SelectionChanged">
                         <ListView.View>
                             <GridView>
