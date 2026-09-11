@@ -29,17 +29,17 @@
                             <Label DockPanel.Dock="Top" FontWeight="Bold">Service Cost</Label>
                             <TextBox Margin="5" DockPanel.Dock="Top" x:Name="TbxServiceCost" />
                             <Label DockPanel.Dock="Top" FontWeight="Bold">Service Tag</Label>
-                            <xctk:IntegerUpDown DockPanel.Dock="Top" Margin="5" x:Name="IUDServiceTag" AllowSpin="False" AllowTextInput="False" Minimum="100" Maximum="900" Increment="10"/>
+                            <xctk:IntegerUpDown DockPanel.Dock="Top" Margin="5" x:Name="IudServiceTag" AllowSpin="False" AllowTextInput="False" Minimum="100" Maximum="900" Increment="10" Value="100"/>
 
                         </DockPanel>
                         <DockPanel Grid.Column="1" LastChildFill="False">
                             <Label DockPanel.Dock="Top" FontWeight="Bold">Service Type</Label>
                             <DockPanel DockPanel.Dock="Top">
-                                <RadioButton x:Name="RbtRegular" DockPanel.Dock="Left" Content="Regular" Margin="5" />
-                                <RadioButton x:Name="RbtExpress" DockPanel.Dock="Left" Content="Express" Margin="5" />
+                                <RadioButton x:Name="RbtRegular" DockPanel.Dock="Left" Content="Regular" Margin="5" IsChecked="True" GroupName="Priority"/>
+                                <RadioButton x:Name="RbtExpress" DockPanel.Dock="Left" Content="Express" Margin="5" GroupName="Priority" />
                                 
                             </DockPanel>
-                            <Button Margin="5" DockPanel.Dock="Bottom">Submit</Button>
+                            <Button x:Name="BtnSubmit" Margin="5" DockPanel.Dock="Bottom" Click="AddNewItem">Submit</Button>
                         </DockPanel>
                     </Grid>
                     
@@ -56,12 +56,12 @@
                         </DockPanel>
                         <DockPanel Grid.Column="1" LastChildFill="False">
                             <Label DockPanel.Dock="Top" FontWeight="Bold">Drone Model</Label>
-                            <TextBox Margin="5" DockPanel.Dock="Top" x:Name="TbxDroneModel" />
+                            <TextBox Margin="5" DockPanel.Dock="Top" x:Name="TbxDroneModel"/>
                         </DockPanel>
                     </Grid>
                     <DockPanel DockPanel.Dock="Top">
                         <Label DockPanel.Dock="Top" FontWeight="Bold">Service Problem</Label>
-                        <TextBox DockPanel.Dock="Top" Margin="5"></TextBox>
+                        <TextBox x:Name="TbxServiceProblem" DockPanel.Dock="Top" Margin="5" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" ></TextBox>
 
                     </DockPanel>
                 </DockPanel>
@@ -73,26 +73,30 @@
                 </Grid.ColumnDefinitions>
                 <DockPanel LastChildFill="True" Grid.Column="0" Margin="5">
                     <Label DockPanel.Dock="Top" FontWeight="Bold">Regular Queue</Label>
-                    <Button  Margin="5" DockPanel.Dock="Bottom">Process Selected</Button>
-                    <ListView Margin="5" DockPanel.Dock="Top" d:ItemsSource="{d:SampleData ItemCount=5}">
+                    <Button x:Name="BtnProcessRegular"  Margin="5" DockPanel.Dock="Bottom" Click="Button_Click">Process Next in Queue</Button>
+                    <ListView x:Name="LvwRegular" Margin="5" DockPanel.Dock="Top" d:ItemsSource="{d:SampleData ItemCount=5}" SelectionChanged="LvwRegular_SelectionChanged">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="Tag" DisplayMemberBinding="{Binding ServiceTag}"/>
                                 <GridViewColumn Header="Client Name" DisplayMemberBinding= "{Binding ClientName}"/>
-                                <GridViewColumn Header="Drone Model" DisplayMemberBinding= "{Binding DroneModel}"/>
+                                <GridViewColumn Header="Model" DisplayMemberBinding= "{Binding DroneModel}"/>
+                                <GridViewColumn Header="Problem" DisplayMemberBinding= "{Binding ServiceProblem}"/>
+                                <GridViewColumn Header="Cost" DisplayMemberBinding= "{Binding ServiceCost}"/>
                             </GridView>
                         </ListView.View>
                     </ListView>
                 </DockPanel>
                 <DockPanel LastChildFill="True" Grid.Column="1" Margin="5">
                     <Label DockPanel.Dock="Top" FontWeight="Bold">Express Queue</Label>
-                    <Button  Margin="5" DockPanel.Dock="Bottom">Process Selected</Button>
-                    <ListView Margin="5" DockPanel.Dock="Top" d:ItemsSource="{d:SampleData ItemCount=5}">
+                    <Button x:Name="BtnProcessExpress"  Margin="5" DockPanel.Dock="Bottom" Click="BtnProcessExpress_Click">Process Next in Queue</Button>
+                    <ListView x:Name="LvwExpress" Margin="5" DockPanel.Dock="Top" d:ItemsSource="{d:SampleData ItemCount=5}" SelectionChanged="LvwExpress_SelectionChanged">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="Tag" DisplayMemberBinding="{Binding ServiceTag}"/>
                                 <GridViewColumn Header="Client Name" DisplayMemberBinding= "{Binding ClientName}"/>
-                                <GridViewColumn Header="Drone Model" DisplayMemberBinding= "{Binding DroneModel}"/>
+                                <GridViewColumn Header="Model" DisplayMemberBinding= "{Binding DroneModel}"/>
+                                <GridViewColumn Header="Problem" DisplayMemberBinding= "{Binding ServiceProblem}"/>
+                                <GridViewColumn Header="Cost" DisplayMemberBinding= "{Binding ServiceCost}"/>
                             </GridView>
                         </ListView.View>
                     </ListView>
@@ -101,12 +105,12 @@
             </Grid>
             <DockPanel Grid.Column="2" Margin="5" LastChildFill="True">
                 <Label DockPanel.Dock="Top" FontWeight="Bold">Finished Items</Label>
-                <ListBox Margin="5" DockPanel.Dock="Top" d:ItemsSource="{d:SampleData ItemCount=5}"></ListBox>
+                <ListBox x:Name="LbxFinished" Margin="5" DockPanel.Dock="Top" d:ItemsSource="{d:SampleData ItemCount=5}" MouseDoubleClick="LbxFinished_MouseDoubleClick"></ListBox>
             </DockPanel>
 
 
         </Grid>
-        <StatusBar Grid.Row="1"/>
+        <StatusBar x:Name="SbrStatus" Grid.Row="1"/>
     </Grid>
     
 </Window>
