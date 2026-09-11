@@ -81,28 +81,6 @@ namespace Icarus_Drone_Service_Software
 				ClearInputFields();
 			}
 		}
-
-		// Helper Methods
-
-		private void ClearInputFields()
-		{
-			// This function empties the input fields on the left side of the program.
-
-			TbxClientName.Clear();
-			TbxDroneModel.Clear();
-			TbxServiceProblem.Clear();
-			TbxServiceCost.Clear();
-		}
-
-		private void IncrementTag()
-		{
-			// This function increments the service tag by the predefined increment value (10).
-			// It also keeps the global service tag value updated.
-			
-			IudServiceTag.Value += IudServiceTag.Increment;
-			currentServiceTag = (int)IudServiceTag.Value; // update global service tag variable
-		}
-
 		private void DisplayServiceQueue(Queue<Drone> serviceQueue, ListView listView)
 		{
 			// This function clears a listview, then displays a queues contents within it.
@@ -113,78 +91,13 @@ namespace Icarus_Drone_Service_Software
 				listView.Items.Add(drone);
 			}
 		}
-
-		private bool GetServicePriority()
-		{
-			// This function returns a bool value depending on what state the radio buttons are in.
-			// True = express, False = regular
-
-			if (RbtExpress.IsChecked == true)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-
-		private bool CheckEntryValidity()
-		{
-			// This function runs several checks to see if the inputs fields contain errors.
-			// If so, it reurns true and displays an appropriate error message. 
-
-			SbrStatus.Items.Clear();
-			string errorMessage = "";
-			if (string.IsNullOrWhiteSpace(TbxClientName.Text)) // Check if client name field is empty.
-			{
-				errorMessage = "Client Name is required.";
-				SbrStatus.Items.Add(errorMessage);
-			}
-			if (string.IsNullOrWhiteSpace(TbxDroneModel.Text)) // Check if drone model feild is empty.
-			{
-				errorMessage = "Drone Model is required.";
-				SbrStatus.Items.Add(errorMessage);
-			}
-			if (string.IsNullOrWhiteSpace(TbxServiceProblem.Text)) // Check if service problem field is empty.
-			{
-				errorMessage = "Service Problem is required.";
-				SbrStatus.Items.Add(errorMessage);
-			}
-			if (string.IsNullOrWhiteSpace(TbxServiceCost.Text)) // Check if service cost field is empty.
-			{
-				errorMessage = "Service Cost is required.";
-				SbrStatus.Items.Add(errorMessage);
-			}
-			// check that service cost is a valid double with two decimal places
-			if (!double.TryParse(TbxServiceCost.Text, out double serviceCost) || serviceCost < 0) // Check if service cost is a positive number.
-			{
-				errorMessage = "Service Cost must be a valid positive number.";
-				SbrStatus.Items.Add(errorMessage);
-			}
-			else if (Math.Abs(serviceCost - Math.Round(serviceCost, 2)) > 0.000001) // Check if service cost has at most two decimal places.
-			{
-				errorMessage = "Service Cost must have at most two decimal places.";
-				SbrStatus.Items.Add(errorMessage);
-			}
-			if (errorMessage != "") // If no errors are detected, return false.
-			{
-				return false;
-			}
-			else // If errors are detected, return true.
-			{
-				return true;
-			}
-			
-		}
-
 		private void LvwRegular_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			// This function triggers when the selection changes in the Regular list view.
 			// It fills in the details from the selected item into the input fields on the left hand side, setting them to read only.
 			// It checks if an item from the Express list view is selected. If so, it deselects it.
 			// It also detects if an item is manually deselected, which empties the fields, and makes them writeable again.
-			
+
 			if (LvwRegular.SelectedItem is Drone selectedDrone) // Check if selected item is a drone. If so, creates selectedDrone with pattern matching.
 			{
 				// Set express listview selection to null.
@@ -231,10 +144,9 @@ namespace Icarus_Drone_Service_Software
 					// Remove status strip message.
 					SbrStatus.Items.Clear();
 				}
-				
+
 			}
 		}
-
 		private void LvwExpress_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			// This function triggers when the selection changes in the Express list view.
@@ -290,7 +202,6 @@ namespace Icarus_Drone_Service_Software
 				}
 			}
 		}
-
 		private void BtnProcessRegular_Click(object sender, RoutedEventArgs e)
 		{
 			// This function triggers when the Process button for the regular queue is clicked.
@@ -312,7 +223,6 @@ namespace Icarus_Drone_Service_Software
 			SbrStatus.Items.Add($"Item {added.GetServiceTag()} deqeued from standard queue.");
 
 		}
-
 		private void BtnProcessExpress_Click(object sender, RoutedEventArgs e)
 		{
 			// This function triggers when the Process button for the express queue is clicked.
@@ -333,7 +243,6 @@ namespace Icarus_Drone_Service_Software
 			SbrStatus.Items.Clear();
 			SbrStatus.Items.Add($"Item {added.GetServiceTag()} deqeued from express queue.");
 		}
-
 		private void LbxFinished_MouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
 			// This function triggers when the finished listbox is double clicked.
@@ -346,6 +255,90 @@ namespace Icarus_Drone_Service_Software
 				FinishedList.Remove(removed);
 			}
 		}
+
+		// Helper Methods
+
+		private void ClearInputFields()
+		{
+			// This function empties the input fields on the left side of the program.
+
+			TbxClientName.Clear();
+			TbxDroneModel.Clear();
+			TbxServiceProblem.Clear();
+			TbxServiceCost.Clear();
+		}
+		private void IncrementTag()
+		{
+			// This function increments the service tag by the predefined increment value (10).
+			// It also keeps the global service tag value updated.
+			
+			IudServiceTag.Value += IudServiceTag.Increment;
+			currentServiceTag = (int)IudServiceTag.Value; // update global service tag variable
+		}
+		private bool GetServicePriority()
+		{
+			// This function returns a bool value depending on what state the radio buttons are in.
+			// True = express, False = regular
+
+			if (RbtExpress.IsChecked == true)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		private bool CheckEntryValidity()
+		{
+			// This function runs several checks to see if the inputs fields contain errors.
+			// If so, it reurns true and displays an appropriate error message. 
+
+			SbrStatus.Items.Clear();
+			string errorMessage = "";
+			if (string.IsNullOrWhiteSpace(TbxClientName.Text)) // Check if client name field is empty.
+			{
+				errorMessage = "Client Name is required.";
+				SbrStatus.Items.Add(errorMessage);
+			}
+			if (string.IsNullOrWhiteSpace(TbxDroneModel.Text)) // Check if drone model feild is empty.
+			{
+				errorMessage = "Drone Model is required.";
+				SbrStatus.Items.Add(errorMessage);
+			}
+			if (string.IsNullOrWhiteSpace(TbxServiceProblem.Text)) // Check if service problem field is empty.
+			{
+				errorMessage = "Service Problem is required.";
+				SbrStatus.Items.Add(errorMessage);
+			}
+			if (string.IsNullOrWhiteSpace(TbxServiceCost.Text)) // Check if service cost field is empty.
+			{
+				errorMessage = "Service Cost is required.";
+				SbrStatus.Items.Add(errorMessage);
+			}
+			// check that service cost is a valid double with two decimal places
+			if (!double.TryParse(TbxServiceCost.Text, out double serviceCost) || serviceCost < 0) // Check if service cost is a positive number.
+			{
+				errorMessage = "Service Cost must be a valid positive number.";
+				SbrStatus.Items.Add(errorMessage);
+			}
+			else if (Math.Abs(serviceCost - Math.Round(serviceCost, 2)) > 0.000001) // Check if service cost has at most two decimal places.
+			{
+				errorMessage = "Service Cost must have at most two decimal places.";
+				SbrStatus.Items.Add(errorMessage);
+			}
+			if (errorMessage != "") // If no errors are detected, return false.
+			{
+				return false;
+			}
+			else // If errors are detected, return true.
+			{
+				return true;
+			}
+			
+		}
+
+
 
 	}
 }
