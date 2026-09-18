@@ -19,10 +19,12 @@ namespace Icarus_Drone_Service_Software
     /// </summary>
     public partial class MainWindow : Window
     {
-		Queue<Drone> RegularService = new Queue<Drone>();
-		Queue<Drone> ExpressService = new Queue<Drone>();
-
+		// Programming Criteria 6.2
 		List<Drone> FinishedList = new List<Drone>();
+		// Programming Criteria 6.3
+		Queue<Drone> RegularService = new Queue<Drone>();
+		// Programming Criteria 6.4
+		Queue<Drone> ExpressService = new Queue<Drone>();
 
 		int currentServiceTag;
 
@@ -33,6 +35,7 @@ namespace Icarus_Drone_Service_Software
 
 		// User Interaction Methods
 
+		// Programming Criteria 6.5
 		private void AddNewItem(object sender, RoutedEventArgs e)
 		{
 			// This function triggers if the submit button is clicked.
@@ -49,6 +52,7 @@ namespace Icarus_Drone_Service_Software
 
 				if (GetServicePriority() == true) // Check express button is selected.
 				{
+					// Programming Criteria 6.6
 					// Add express service surcharge to the service cost.
 					drone.SetServiceCost(drone.GetServiceCost() * 1.15);
 					// Add the drone to the express service queue
@@ -74,23 +78,11 @@ namespace Icarus_Drone_Service_Software
 					SbrStatus.Items.Add($"Item {drone.GetServiceTag()} added to standard queue.");
 				}
 
-				// DEBUG: Output the details of the added drone to the debug console
-				Debug.WriteLine($"Added new drone for {drone.GetClientName()} to {(RbtExpress.IsChecked == true ? "Express" : "Regular")} Service.");
-
 				// Clear the input fields
 				ClearInputFields();
 			}
 		}
-		private void DisplayServiceQueue(Queue<Drone> serviceQueue, ListView listView)
-		{
-			// This function clears a listview, then displays a queues contents within it.
-
-			listView.Items.Clear();
-			foreach (Drone drone in serviceQueue)
-			{
-				listView.Items.Add(drone);
-			}
-		}
+		// Programming Criteria 6.12
 		private void LvwRegular_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			// This function triggers when the selection changes in the Regular list view.
@@ -147,6 +139,7 @@ namespace Icarus_Drone_Service_Software
 
 			}
 		}
+		// Programming Criteria 6.13
 		private void LvwExpress_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			// This function triggers when the selection changes in the Express list view.
@@ -202,6 +195,7 @@ namespace Icarus_Drone_Service_Software
 				}
 			}
 		}
+		// Programming Criteria 6.14
 		private void BtnProcessRegular_Click(object sender, RoutedEventArgs e)
 		{
 			// This function triggers when the Process button for the regular queue is clicked.
@@ -223,6 +217,7 @@ namespace Icarus_Drone_Service_Software
 			SbrStatus.Items.Add($"Item {added.GetServiceTag()} deqeued from standard queue.");
 
 		}
+		// Programming Criteria 6.15
 		private void BtnProcessExpress_Click(object sender, RoutedEventArgs e)
 		{
 			// This function triggers when the Process button for the express queue is clicked.
@@ -243,6 +238,7 @@ namespace Icarus_Drone_Service_Software
 			SbrStatus.Items.Clear();
 			SbrStatus.Items.Add($"Item {added.GetServiceTag()} deqeued from express queue.");
 		}
+		// Programming Criteria 6.16
 		private void LbxFinished_MouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
 			// This function triggers when the finished listbox is double clicked.
@@ -258,6 +254,7 @@ namespace Icarus_Drone_Service_Software
 
 		// Helper Methods
 
+		// Programming Criteria 6.17
 		private void ClearInputFields()
 		{
 			// This function empties the input fields on the left side of the program.
@@ -267,6 +264,7 @@ namespace Icarus_Drone_Service_Software
 			TbxServiceProblem.Clear();
 			TbxServiceCost.Clear();
 		}
+		// Programming Criteria 6.11
 		private void IncrementTag()
 		{
 			// This function increments the service tag by the predefined increment value (10).
@@ -275,6 +273,7 @@ namespace Icarus_Drone_Service_Software
 			IudServiceTag.Value += IudServiceTag.Increment;
 			currentServiceTag = (int)IudServiceTag.Value; // update global service tag variable
 		}
+		// Programming Criteria 6.7
 		private bool GetServicePriority()
 		{
 			// This function returns a bool value depending on what state the radio buttons are in.
@@ -289,6 +288,7 @@ namespace Icarus_Drone_Service_Software
 				return false;
 			}
 		}
+		// Programming Criteria 6.10
 		private bool CheckEntryValidity()
 		{
 			// This function runs several checks to see if the inputs fields contain errors.
@@ -337,7 +337,17 @@ namespace Icarus_Drone_Service_Software
 			}
 			
 		}
+		// Programming Criteria 6.8, 6.9
+		private void DisplayServiceQueue(Queue<Drone> serviceQueue, ListView listView)
+		{
+			// This function clears a listview, then displays a queues contents within it.
 
+			listView.Items.Clear();
+			foreach (Drone drone in serviceQueue)
+			{
+				listView.Items.Add(drone);
+			}
+		}
 
 
 	}

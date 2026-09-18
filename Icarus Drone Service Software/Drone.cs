@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Icarus_Drone_Service_Software
 {
+	// Programming Criteria 6.1
 	class Drone
 	{
 		// properties
