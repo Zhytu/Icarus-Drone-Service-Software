@@ -81,7 +81,7 @@
                                 <GridViewColumn Header="Client Name" DisplayMemberBinding= "{Binding ClientName}"/>
                                 <GridViewColumn Header="Model" DisplayMemberBinding= "{Binding DroneModel}"/>
                                 <GridViewColumn Header="Problem" DisplayMemberBinding= "{Binding ServiceProblem}"/>
-                                <GridViewColumn Header="Cost" DisplayMemberBinding= "{Binding ServiceCost}"/>
+                                <GridViewColumn Header="Cost" DisplayMemberBinding="{Binding ServiceCost, StringFormat='${0:F2}'}"/>
                             </GridView>
                         </ListView.View>
                     </ListView>
@@ -96,7 +96,7 @@
                                 <GridViewColumn Header="Client Name" DisplayMemberBinding= "{Binding ClientName}"/>
                                 <GridViewColumn Header="Model" DisplayMemberBinding= "{Binding DroneModel}"/>
                                 <GridViewColumn Header="Problem" DisplayMemberBinding= "{Binding ServiceProblem}"/>
-                                <GridViewColumn Header="Cost" DisplayMemberBinding= "{Binding ServiceCost}"/>
+                                <GridViewColumn Header="Cost" DisplayMemberBinding="{Binding ServiceCost, StringFormat='${0:F2}'}"/>
                             </GridView>
                         </ListView.View>
                     </ListView>
